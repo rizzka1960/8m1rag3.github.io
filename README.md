@@ -5,7 +5,7 @@
 - `index.html` — главная (сигнал, о проекте, каналы YouTube, вход к загадкам)
 - `puzzles.html` — ввод ключей загадок
 - `privacy.html`, `terms.html` — Privacy Policy и Terms of Service для аудита YouTube API
-- `assets/site.js` — настройки сверху файла:
+- `site.js` — настройки сверху файла:
   - `NEXT_SIGNAL` — дата окончания обратного отсчёта (UTC);
   - `PUZZLE_KEYS` — ответы на загадки (SHA-256 хэш ответа -> страница уровня).
     Хэш получить: открыть сайт, F12 -> Console -> `await cicadaHash("ответ")`.
