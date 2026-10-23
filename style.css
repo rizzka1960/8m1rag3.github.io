@@ -60,6 +60,7 @@ header.top {
 header.top nav { display: flex; gap: 18px; flex-wrap: wrap; }
 header.top nav a { border: 0; color: var(--dim); }
 header.top nav a:hover { color: var(--fg); }
+header.top nav .here { color: var(--ice); }
 .home-link { border: 0; color: var(--dim); font-family: var(--wide); letter-spacing: .3em; }
 
 .lang { display: flex; gap: 2px; }
