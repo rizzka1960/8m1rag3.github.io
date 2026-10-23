@@ -8,7 +8,17 @@ const NEXT_SIGNAL = "2026-11-01T03:30:01Z";
 // Ключи загадок: SHA-256 от ответа (в нижнем регистре, без пробелов по краям) -> страница.
 // Хэш ответа получить: в консоли браузера выполнить  await mirageHash("ответ")
 const PUZZLE_KEYS = {
-  // "хэш": "level1.html",
+  // I · ЛИФТ (RU и EN ответ)
+  "9896c643dc3953847d830203f7086c37d98eeac72cbb026a3bc1bc8d6e2cea24": "b4e1c9.html",
+  "7ab3778776cde4fa728a162a53ad3abcc967d1bd7361039e0942888240c4ce86": "b4e1c9.html",
+};
+
+// I · ЛИФТ: хэш правильной последовательности этажей и зашифрованный ею текст за дверью 13.
+// Генератор с ответами лежит вне репозитория: Документы\8m1rag3-secrets\gen_lift.py
+const LIFT = {
+  check: "376a112518936d745aad53bea10a96771f6452020bac936d58a9b634fcf096a8",
+  ru: "8t7BLRx2M+KlJNkECBjE9PfRYfApixLWAiciXAW1hiuZHRjPeYNf7rmAXRsE9fl6nRxNU29/PT882Z+XdhsnOiAYGSPBGnrduT9IALoS2X2KauiDSRgSsi/G2XGL2p8F2tJMkifWjBrwXW1Vzy9zhIQAWrRvSGlDTqcZo3XTblwBBBQaGOxtPVHD4ZgwpKqe/Vmn8ifzc/p5NYGoUZTno+R1+gzmTNamN1jBl0KeJEk9C3f4j3S/u4GkB6CzvzX/BU1foWVwE5NoEyK8UHjXDEUIzh/3E173bbY00c5dR6sl/mcgj4PJIbpTzH0/5HmnEU7JPFiY76dtD9Dw8/bs",
+  en: "diJ0v6isjRAGvJak06doBB9lhQHOMsduxtiM2fABaY5vE0xojHKvW2YhsK6ZVwbLSli8tN6uhOSKe8Xfw6+A6ZzE57df8s9ND9Tr4Lq2GN9WyXjC6vC3aZtdaKE/SDjYYxvsR3V0LapS/rrqJ5KUhCPU+GiQ7u2V/28ZGrzTy7W1pq/KsWud2jqzfUejVQ==",
 };
 
 /* ============================================================ */
@@ -138,6 +148,61 @@ const PUZZLE_KEYS = {
       document.body.classList.add("flash");
       setTimeout(() => document.body.classList.remove("flash"), 140);
     });
+  }
+
+  // ---------- I · lift panel ----------
+  const panel = document.querySelector(".panel");
+  if (panel) {
+    const display = panel.querySelector(".display");
+    const b13 = panel.querySelector(".b13");
+    const reveal = document.querySelector(".reveal");
+    const pressed = [];
+    let key = null;
+
+    async function keystream(seq, n) {
+      let out = new Uint8Array(0), i = 0;
+      while (out.length < n) {
+        const block = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${seq}:${i++}`)));
+        const next = new Uint8Array(out.length + block.length);
+        next.set(out); next.set(block, out.length); out = next;
+      }
+      return out.slice(0, n);
+    }
+    async function decrypt(b64, seq) {
+      const data = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+      const ks = await keystream(seq, data.length);
+      return new TextDecoder().decode(data.map((b, i) => b ^ ks[i]));
+    }
+    async function showReveal() {
+      reveal.querySelector(".reveal-text").textContent = await decrypt(LIFT[root.dataset.lang], key);
+    }
+
+    panel.querySelectorAll(".buttons button").forEach(btn => btn.addEventListener("click", async () => {
+      const f = btn.dataset.floor;
+      display.textContent = f.padStart(2, "0");
+      btn.classList.add("lit");
+      setTimeout(() => btn.classList.remove("lit"), 600);
+      pressed.push(f);
+      if (pressed.length > 3) pressed.shift();
+      const seq = pressed.join("-");
+      if (pressed.length === 3 && await sha256("8M1RAG3:" + seq) === LIFT.check) {
+        key = seq;
+        document.body.classList.add("flash");
+        setTimeout(() => document.body.classList.remove("flash"), 180);
+        display.textContent = "??";
+        b13.hidden = false;
+      }
+    }));
+
+    b13.addEventListener("click", async () => {
+      if (!key) return;
+      display.textContent = "13";
+      panel.classList.add("arrive");
+      await showReveal();
+      reveal.hidden = false;
+      reveal.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    document.addEventListener("langchange", () => { if (key && !reveal.hidden) showReveal(); });
   }
 
   // ---------- for those who open the console ----------

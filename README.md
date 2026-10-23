@@ -4,6 +4,7 @@
 
 - `index.html` — главная (сигнал, о проекте, каналы YouTube, вход к загадкам)
 - `puzzles.html` — ввод ключей загадок
+- `lift.html` — уровень I «Лифт» (ответы и генератор лежат вне репозитория)
 - `privacy.html`, `terms.html` — Privacy Policy и Terms of Service для аудита YouTube API
 - `site.js` — настройки сверху файла:
   - `NEXT_SIGNAL` — дата окончания обратного отсчёта (UTC);
