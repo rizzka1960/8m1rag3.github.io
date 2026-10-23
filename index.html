@@ -3,24 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title data-ru="Цикада 3301" data-en="Cicada 3301">Cicada 3301</title>
-<meta name="description" content="Cicada 3301 / Цикада 3301 — mystery short stories on YouTube, ciphers and puzzles. A fan project.">
-<link rel="icon" href="cicada.svg" type="image/svg+xml">
+<title data-ru="8M1RAG3" data-en="8M1RAG3">8M1RAG3</title>
+<meta name="description" content="8M1RAG3 — mystery short stories on YouTube, ciphers and puzzles.">
+<meta property="og:title" content="8M1RAG3">
+<meta property="og:description" content="Everything you see is a reflection.">
+<meta property="og:image" content="poster.webp">
+<link rel="icon" href="mirage.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Michroma&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <!--
-  SGVsbG8uIFlvdSBsb29rZWQgY2xvc2VyIHRoYW4gbW9zdC4gVGhlIGZpcnN0IGtleSBhcnJpdmVzIHdoZW4gdGhlIGNsb2NrIHJlYWNoZXMgemVyby4gVW50aWwgdGhlbjogd2F0Y2ggZXZlcnkgZXBpc29kZSB0byB0aGUgdmVyeSBsYXN0IGZyYW1lLiAzMzAx
+  SGVsbG8uIFlvdSBsb29rZWQgY2xvc2VyIHRoYW4gbW9zdC4gVGhlIGZpcnN0IGtleSBhcnJpdmVzIHdoZW4gdGhlIGNsb2NrIHJlYWNoZXMgemVyby4gVW50aWwgdGhlbjogZXZlcnl0aGluZyB5b3Ugc2VlIGlzIHJlZmxlY3RlZC4gTG9vayBhdCB0aGUgcmVmbGVjdGlvbi4gOE0xUkFHMw==
 -->
+<svg class="svgdefs" aria-hidden="true">
+  <filter id="water" x="-5%" y="-20%" width="110%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.006 0.08" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="10s" values="0.006 0.08;0.01 0.12;0.006 0.08" repeatCount="indefinite"/>
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="16" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
 <canvas id="noise"></canvas>
 <div class="scanlines"></div>
 <div class="vignette"></div>
 
 <div class="wrap">
   <header class="top">
-    <a class="home-link" href="index.html">3301</a>
+    <a class="home-link" href="index.html">8M1RAG3</a>
     <nav>
       <a href="#about"><span data-l="ru">О проекте</span><span data-l="en">About</span></a>
       <a href="#channels"><span data-l="ru">Каналы</span><span data-l="en">Channels</span></a>
@@ -30,24 +41,27 @@
   </header>
 
   <section class="hero">
-    <img class="cicada" src="cicada.svg" alt="Cicada">
-    <h1 class="glitch" data-text="3301">3301</h1>
-    <div class="sub"><span data-l="ru">Цикада</span><span data-l="en">Cicada</span></div>
+    <div class="mark">
+      <img class="real" src="mirage.svg" alt="8M1RAG3">
+      <img class="reflect" src="mirage.svg" alt="" aria-hidden="true">
+    </div>
+    <h1 class="word">8M1RAG3</h1>
+    <div class="word reflect" aria-hidden="true">8M1RAG3</div>
 
     <template data-msg="ru">
       <p>Здравствуй.</p>
-      <p>Мы ищем тех, кто замечает то, что остальные пропускают.</p>
-      <p>Ответы уже здесь. Не все из них видны.</p>
+      <p>Всё, что ты видишь, — лишь отражение. Правда лежит по другую сторону.</p>
+      <p>Мы ищем тех, кто умеет отличить одно от другого.</p>
       <p>Удачи.</p>
     </template>
     <template data-msg="en">
       <p>Hello.</p>
-      <p>We are looking for those who notice what others miss.</p>
-      <p>The answers are already here. Not all of them are visible.</p>
+      <p>Everything you see is only a reflection. The truth lies on the other side.</p>
+      <p>We are looking for those who can tell one from the other.</p>
       <p>Good luck.</p>
     </template>
     <div class="message" data-typed></div>
-    <p class="void">the source remembers what the page forgets</p>
+    <p class="void">the surface lies. the source does not.</p>
     <div class="scroll-hint">▼</div>
   </section>
 
@@ -63,8 +77,8 @@
       <div class="cell"><div class="num" data-s>00</div><div class="lbl"><span data-l="ru">секунд</span><span data-l="en">sec</span></div></div>
     </div>
     <p class="signal-note">
-      <span data-l="ru">Когда счётчик дойдёт до нуля, откроется первая дверь.</span>
-      <span data-l="en">When the clock reaches zero, the first door opens.</span>
+      <span data-l="ru">Когда счётчик дойдёт до нуля, поверхность дрогнет и откроется первая дверь.</span>
+      <span data-l="en">When the clock reaches zero, the surface will break and the first door will open.</span>
     </p>
     <p class="signal-note signal-live" hidden>
       <span data-l="ru">Сигнал получен. Ищи.</span>
@@ -75,13 +89,13 @@
   <section id="about">
     <h2><span data-l="ru">О проекте</span><span data-l="en">About</span></h2>
     <div data-l="ru">
-      <p>«Цикада 3301» — это короткие мистические истории на YouTube. Каждый сериал — отдельное дело: странные правила, пропавшие люди, протоколы, о которых лучше не знать.</p>
-      <p>Но истории — только поверхность. В сериях, описаниях и на этом сайте спрятаны шифры. Тот, кто соберёт их вместе, пройдёт дальше остальных.</p>
+      <p>8M1RAG3 — это короткие мистические истории на YouTube. Каждый сериал — отдельное дело: странные правила, пропавшие люди, протоколы, о которых лучше не знать.</p>
+      <p>Но истории — только поверхность воды. Под ней спрятаны шифры: в сериях, в описаниях, на этом сайте. Тот, кто соберёт их вместе, увидит то, что не отражается.</p>
       <p>Скоро здесь появятся загадки. Следи за сигналом.</p>
     </div>
     <div data-l="en">
-      <p>"Cicada 3301" is a series of short mystery stories on YouTube. Every series is a separate case: strange rules, missing people, protocols you would rather not know about.</p>
-      <p>But the stories are only the surface. Ciphers are hidden in the episodes, in the descriptions and on this site. Whoever puts them together will go further than the rest.</p>
+      <p>8M1RAG3 is a series of short mystery stories on YouTube. Every series is a separate case: strange rules, missing people, protocols you would rather not know about.</p>
+      <p>But the stories are only the surface of the water. Ciphers are hidden beneath it: in the episodes, in the descriptions, on this site. Whoever puts them together will see what is not reflected.</p>
       <p>Puzzles are coming soon. Watch for the signal.</p>
     </div>
   </section>
@@ -121,7 +135,7 @@
       <a href="terms.html"><span data-l="ru">Условия использования</span><span data-l="en">Terms of Service</span></a>
       <a href="mailto:cciccaddaa.33.01@gmail.com"><span data-l="ru">Связь</span><span data-l="en">Contact</span></a>
     </div>
-    <p><span data-l="ru">Фан-проект. Не связан с оригинальной группой Cicada 3301.</span><span data-l="en">A fan project. Not affiliated with the original Cicada 3301.</span></p>
+    <p>© 2026 8M1RAG3</p>
     <p><span data-l="ru">YouTube является товарным знаком Google LLC.</span><span data-l="en">YouTube is a trademark of Google LLC.</span></p>
   </div>
 </footer>

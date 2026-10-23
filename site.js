@@ -6,7 +6,7 @@
 const NEXT_SIGNAL = "2026-11-01T03:30:01Z";
 
 // Ключи загадок: SHA-256 от ответа (в нижнем регистре, без пробелов по краям) -> страница.
-// Хэш ответа получить: в консоли браузера выполнить  await cicadaHash("ответ")
+// Хэш ответа получить: в консоли браузера выполнить  await mirageHash("ответ")
 const PUZZLE_KEYS = {
   // "хэш": "level1.html",
 };
@@ -55,15 +55,15 @@ const PUZZLE_KEYS = {
   }
 
   // ---------- random disturbances ----------
-  const bug = document.querySelector(".cicada");
+  const word = document.querySelector(".word:not(.reflect)");
   function disturb() {
     if (Math.random() < .35) {
       document.body.classList.add("flash");
       setTimeout(() => document.body.classList.remove("flash"), 140);
     }
-    if (bug) {
-      bug.classList.add("twitch");
-      setTimeout(() => bug.classList.remove("twitch"), 260);
+    if (word) {
+      word.classList.add("shiver");
+      setTimeout(() => word.classList.remove("shiver"), 360);
     }
     setTimeout(disturb, 4000 + Math.random() * 9000);
   }
@@ -120,7 +120,7 @@ const PUZZLE_KEYS = {
     const buf = await crypto.subtle.digest("SHA-256", data);
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
   }
-  window.cicadaHash = s => sha256(s.trim().toLowerCase());
+  window.mirageHash = s => sha256(s.trim().toLowerCase());
 
   const form = document.querySelector(".keyform");
   if (form) {
@@ -141,6 +141,6 @@ const PUZZLE_KEYS = {
   }
 
   // ---------- for those who open the console ----------
-  console.log("%c3301", "font:700 40px monospace;color:#c4141c");
-  console.log("%cYou are looking in the right direction. Look closer at the page itself.", "font:14px monospace;color:#888");
+  console.log("%c8M1RAG3", "font:700 36px monospace;letter-spacing:8px;color:#a9d6ff;text-shadow:0 0 12px #3d8fe0");
+  console.log("%cYou are looking beneath the surface. Good. Now look at the reflection.", "font:14px monospace;color:#888");
 })();

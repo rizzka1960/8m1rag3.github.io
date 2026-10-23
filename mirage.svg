@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 216">
+  <defs>
+    <linearGradient id="hz" x1="0" x2="1">
+      <stop offset="0" stop-color="#bfe3ff" stop-opacity="0"/>
+      <stop offset=".25" stop-color="#bfe3ff" stop-opacity=".9"/>
+      <stop offset=".5" stop-color="#ffffff"/>
+      <stop offset=".75" stop-color="#bfe3ff" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#bfe3ff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="needle" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8f5ff" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <radialGradient id="mound" cx=".5" cy="1" r=".7">
+      <stop offset="0" stop-color="#d7efff" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#5aa8e8" stop-opacity=".25"/>
+    </radialGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#glow)">
+    <!-- ring, cut by the horizon -->
+    <path d="M 63.5 210 A 140 140 0 1 1 336.5 210" fill="none" stroke="#a9d6ff" stroke-width="5"/>
+    <!-- light bump on the horizon -->
+    <path d="M 140 210 C 175 210 182 186 200 186 C 218 186 225 210 260 210 Z" fill="url(#mound)"/>
+    <!-- needle -->
+    <polygon points="200,40 196.5,210 203.5,210" fill="url(#needle)"/>
+    <!-- horizon -->
+    <rect x="0" y="208.5" width="400" height="3" fill="url(#hz)"/>
+  </g>
+</svg>
