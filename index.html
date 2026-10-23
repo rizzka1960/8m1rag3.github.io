@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-ru="Цикада 3301" data-en="Cicada 3301">Cicada 3301</title>
+<meta name="description" content="Cicada 3301 / Цикада 3301 — mystery short stories on YouTube, ciphers and puzzles. A fan project.">
+<link rel="icon" href="assets/cicada.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<!--
+  SGVsbG8uIFlvdSBsb29rZWQgY2xvc2VyIHRoYW4gbW9zdC4gVGhlIGZpcnN0IGtleSBhcnJpdmVzIHdoZW4gdGhlIGNsb2NrIHJlYWNoZXMgemVyby4gVW50aWwgdGhlbjogd2F0Y2ggZXZlcnkgZXBpc29kZSB0byB0aGUgdmVyeSBsYXN0IGZyYW1lLiAzMzAx
+-->
+<canvas id="noise"></canvas>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<div class="wrap">
+  <header class="top">
+    <a class="home-link" href="index.html">3301</a>
+    <nav>
+      <a href="#about"><span data-l="ru">О проекте</span><span data-l="en">About</span></a>
+      <a href="#channels"><span data-l="ru">Каналы</span><span data-l="en">Channels</span></a>
+      <a href="puzzles.html"><span data-l="ru">Загадки</span><span data-l="en">Puzzles</span></a>
+    </nav>
+    <div class="lang"><button data-set="ru">RU</button><button data-set="en">EN</button></div>
+  </header>
+
+  <section class="hero">
+    <img class="cicada" src="assets/cicada.svg" alt="Cicada">
+    <h1 class="glitch" data-text="3301">3301</h1>
+    <div class="sub"><span data-l="ru">Цикада</span><span data-l="en">Cicada</span></div>
+
+    <template data-msg="ru">
+      <p>Здравствуй.</p>
+      <p>Мы ищем тех, кто замечает то, что остальные пропускают.</p>
+      <p>Ответы уже здесь. Не все из них видны.</p>
+      <p>Удачи.</p>
+    </template>
+    <template data-msg="en">
+      <p>Hello.</p>
+      <p>We are looking for those who notice what others miss.</p>
+      <p>The answers are already here. Not all of them are visible.</p>
+      <p>Good luck.</p>
+    </template>
+    <div class="message" data-typed></div>
+    <p class="void">the source remembers what the page forgets</p>
+    <div class="scroll-hint">▼</div>
+  </section>
+
+  <section id="signal">
+    <h2><span data-l="ru">Следующий сигнал</span><span data-l="en">Next signal</span></h2>
+    <div class="countdown">
+      <div class="cell"><div class="num" data-d>00</div><div class="lbl"><span data-l="ru">дней</span><span data-l="en">days</span></div></div>
+      <div class="sep">:</div>
+      <div class="cell"><div class="num" data-h>00</div><div class="lbl"><span data-l="ru">часов</span><span data-l="en">hours</span></div></div>
+      <div class="sep">:</div>
+      <div class="cell"><div class="num" data-m>00</div><div class="lbl"><span data-l="ru">минут</span><span data-l="en">min</span></div></div>
+      <div class="sep">:</div>
+      <div class="cell"><div class="num" data-s>00</div><div class="lbl"><span data-l="ru">секунд</span><span data-l="en">sec</span></div></div>
+    </div>
+    <p class="signal-note">
+      <span data-l="ru">Когда счётчик дойдёт до нуля, откроется первая дверь.</span>
+      <span data-l="en">When the clock reaches zero, the first door opens.</span>
+    </p>
+    <p class="signal-note signal-live" hidden>
+      <span data-l="ru">Сигнал получен. Ищи.</span>
+      <span data-l="en">Signal received. Search.</span>
+    </p>
+  </section>
+
+  <section id="about">
+    <h2><span data-l="ru">О проекте</span><span data-l="en">About</span></h2>
+    <div data-l="ru">
+      <p>«Цикада 3301» — это короткие мистические истории на YouTube. Каждый сериал — отдельное дело: странные правила, пропавшие люди, протоколы, о которых лучше не знать.</p>
+      <p>Но истории — только поверхность. В сериях, описаниях и на этом сайте спрятаны шифры. Тот, кто соберёт их вместе, пройдёт дальше остальных.</p>
+      <p>Скоро здесь появятся загадки. Следи за сигналом.</p>
+    </div>
+    <div data-l="en">
+      <p>"Cicada 3301" is a series of short mystery stories on YouTube. Every series is a separate case: strange rules, missing people, protocols you would rather not know about.</p>
+      <p>But the stories are only the surface. Ciphers are hidden in the episodes, in the descriptions and on this site. Whoever puts them together will go further than the rest.</p>
+      <p>Puzzles are coming soon. Watch for the signal.</p>
+    </div>
+  </section>
+
+  <section id="channels">
+    <h2><span data-l="ru">Каналы на YouTube</span><span data-l="en">YouTube channels</span></h2>
+    <div class="channels">
+      <a class="channel" href="https://www.youtube.com/channel/UC3V9OMhAj-2E0dM-iH7ePkg" target="_blank" rel="noopener">
+        <svg class="yt" viewBox="0 0 28 20" aria-label="YouTube"><path fill="#FF0000" d="M27.4 3.1A3.5 3.5 0 0 0 25 .6C22.8 0 14 0 14 0S5.2 0 3 .6A3.5 3.5 0 0 0 .6 3.1C0 5.3 0 10 0 10s0 4.7.6 6.9A3.5 3.5 0 0 0 3 19.4c2.2.6 11 .6 11 .6s8.8 0 11-.6a3.5 3.5 0 0 0 2.4-2.5c.6-2.2.6-6.9.6-6.9s0-4.7-.6-6.9Z"/><path fill="#fff" d="m11.2 14.3 7.3-4.3-7.3-4.3v8.6Z"/></svg>
+        <span><b>Цикада 3301</b><small><span data-l="ru">YouTube · на русском</span><span data-l="en">YouTube · Russian</span></small></span>
+      </a>
+      <a class="channel" href="https://www.youtube.com/channel/UCgP9jRkaAJPh_b6TvErUX9g" target="_blank" rel="noopener">
+        <svg class="yt" viewBox="0 0 28 20" aria-label="YouTube"><path fill="#FF0000" d="M27.4 3.1A3.5 3.5 0 0 0 25 .6C22.8 0 14 0 14 0S5.2 0 3 .6A3.5 3.5 0 0 0 .6 3.1C0 5.3 0 10 0 10s0 4.7.6 6.9A3.5 3.5 0 0 0 3 19.4c2.2.6 11 .6 11 .6s8.8 0 11-.6a3.5 3.5 0 0 0 2.4-2.5c.6-2.2.6-6.9.6-6.9s0-4.7-.6-6.9Z"/><path fill="#fff" d="m11.2 14.3 7.3-4.3-7.3-4.3v8.6Z"/></svg>
+        <span><b>Cicada 3301</b><small><span data-l="ru">YouTube · на английском</span><span data-l="en">YouTube · English</span></small></span>
+      </a>
+    </div>
+    <p class="yt-note">
+      <span data-l="ru">Видео публикуются на каналах владельцем с помощью собственного инструмента Cicada Shorts Uploader, который использует YouTube API Services. Подробнее: <a href="privacy.html">Политика конфиденциальности</a>, <a href="terms.html">Условия использования</a>.</span>
+      <span data-l="en">Videos are published to the channels by their owner with a private tool, Cicada Shorts Uploader, which uses YouTube API Services. Details: <a href="privacy.html">Privacy Policy</a>, <a href="terms.html">Terms of Service</a>.</span>
+    </p>
+  </section>
+
+  <section id="puzzles">
+    <h2><span data-l="ru">Загадки</span><span data-l="en">Puzzles</span></h2>
+    <div class="gate">
+      <div class="status"><span data-l="ru">ДОСТУП ЗАКРЫТ</span><span data-l="en">ACCESS DENIED</span></div>
+      <p><span data-l="ru">Первый уровень ещё не открыт. Но ключ уже можно искать.</span><span data-l="en">The first level is not open yet. But you can already search for the key.</span></p>
+      <a class="btn" href="puzzles.html"><span data-l="ru">Ввести ключ</span><span data-l="en">Enter key</span></a>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="links">
+      <a href="privacy.html"><span data-l="ru">Политика конфиденциальности</span><span data-l="en">Privacy Policy</span></a>
+      <a href="terms.html"><span data-l="ru">Условия использования</span><span data-l="en">Terms of Service</span></a>
+      <a href="mailto:cciccaddaa.33.01@gmail.com"><span data-l="ru">Связь</span><span data-l="en">Contact</span></a>
+    </div>
+    <p><span data-l="ru">Фан-проект. Не связан с оригинальной группой Cicada 3301.</span><span data-l="en">A fan project. Not affiliated with the original Cicada 3301.</span></p>
+    <p><span data-l="ru">YouTube является товарным знаком Google LLC.</span><span data-l="en">YouTube is a trademark of Google LLC.</span></p>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

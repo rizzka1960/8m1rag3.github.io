@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" fill="none" stroke="#d8d8d0" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+  <!-- forewings -->
+  <path d="M94 74 C58 82 28 140 34 216 C52 222 74 196 92 122 Z"/>
+  <path d="M106 74 C142 82 172 140 166 216 C148 222 126 196 108 122 Z"/>
+  <path d="M90 84 C66 110 48 160 44 206 M84 112 C70 140 60 170 58 196 M64 132 L80 150 M52 168 L66 178" stroke-width="1.2" opacity=".7"/>
+  <path d="M110 84 C134 110 152 160 156 206 M116 112 C130 140 140 170 142 196 M136 132 L120 150 M148 168 L134 178" stroke-width="1.2" opacity=".7"/>
+  <!-- hindwings -->
+  <path d="M96 94 C72 102 54 140 58 170 C72 170 86 148 94 114 Z" opacity=".6"/>
+  <path d="M104 94 C128 102 146 140 142 170 C128 170 114 148 106 114 Z" opacity=".6"/>
+  <!-- abdomen -->
+  <path d="M100 90 C116 96 118 150 100 182 C82 150 84 96 100 90 Z" fill="#d8d8d0"/>
+  <path d="M90 116 H110 M89 130 H111 M91 144 H109 M94 158 H106" stroke="#050505" stroke-width="1.6"/>
+  <!-- thorax -->
+  <path d="M78 66 C80 90 120 90 122 66 C112 72 88 72 78 66 Z" fill="#d8d8d0"/>
+  <path d="M92 74 L100 84 L108 74" stroke="#050505" stroke-width="1.6"/>
+  <!-- head and eyes -->
+  <path d="M74 60 C76 40 124 40 126 60 C112 66 88 66 74 60 Z"/>
+  <circle cx="72" cy="56" r="7" fill="#c4141c" stroke="#c4141c"/>
+  <circle cx="128" cy="56" r="7" fill="#c4141c" stroke="#c4141c"/>
+  <circle cx="94" cy="50" r="1.6" fill="#d8d8d0"/>
+  <circle cx="106" cy="50" r="1.6" fill="#d8d8d0"/>
+  <circle cx="100" cy="46" r="1.6" fill="#d8d8d0"/>
+  <!-- antennae -->
+  <path d="M90 42 L82 30 M110 42 L118 30" stroke-width="1.4"/>
+</svg>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-ru="Загадки — Цикада 3301" data-en="Puzzles — Cicada 3301">Puzzles — Cicada 3301</title>
+<link rel="icon" href="assets/cicada.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<canvas id="noise"></canvas>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<div class="wrap">
+  <header class="top">
+    <a class="home-link" href="index.html">← 3301</a>
+    <nav>
+      <a href="index.html#about"><span data-l="ru">О проекте</span><span data-l="en">About</span></a>
+      <a href="index.html#channels"><span data-l="ru">Каналы</span><span data-l="en">Channels</span></a>
+    </nav>
+    <div class="lang"><button data-set="ru">RU</button><button data-set="en">EN</button></div>
+  </header>
+
+  <section>
+    <h1 class="glitch" data-text="LIBER">LIBER</h1>
+    <div class="gate" style="margin-top:30px">
+      <div class="status"><span data-l="ru">ДОСТУП ЗАКРЫТ</span><span data-l="en">ACCESS DENIED</span></div>
+      <p>
+        <span data-l="ru">Каждая загадка заканчивается словом. Слово — это ключ. Введи его, и дверь откроется.</span>
+        <span data-l="en">Every puzzle ends with a word. The word is the key. Enter it and the door will open.</span>
+      </p>
+      <form class="keyform" autocomplete="off">
+        <input name="key" type="text" spellcheck="false" aria-label="key" placeholder="_ _ _ _ _">
+        <button class="btn" type="submit"><span data-l="ru">Ввод</span><span data-l="en">Enter</span></button>
+      </form>
+      <div class="verdict" aria-live="polite"></div>
+    </div>
+
+    <ul class="levels">
+      <li><span>I. <span data-l="ru">Пробуждение</span><span data-l="en">Awakening</span></span><span class="lock">[ ▓▓▓ ]</span></li>
+      <li><span>II. ▒▒▒▒▒▒</span><span class="lock">[ ▓▓▓ ]</span></li>
+      <li><span>III. ▒▒▒▒▒▒▒▒</span><span class="lock">[ ▓▓▓ ]</span></li>
+    </ul>
+    <p class="signal-note">
+      <span data-l="ru">Первый уровень откроется после сигнала. <a href="index.html#signal">Смотреть отсчёт</a>.</span>
+      <span data-l="en">The first level opens after the signal. <a href="index.html#signal">See the countdown</a>.</span>
+    </p>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="links">
+      <a href="privacy.html"><span data-l="ru">Политика конфиденциальности</span><span data-l="en">Privacy Policy</span></a>
+      <a href="terms.html"><span data-l="ru">Условия использования</span><span data-l="en">Terms of Service</span></a>
+      <a href="mailto:cciccaddaa.33.01@gmail.com"><span data-l="ru">Связь</span><span data-l="en">Contact</span></a>
+    </div>
+    <p><span data-l="ru">Фан-проект. Не связан с оригинальной группой Cicada 3301.</span><span data-l="en">A fan project. Not affiliated with the original Cicada 3301.</span></p>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>
