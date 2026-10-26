@@ -5,26 +5,30 @@
 // Момент следующего «сигнала» для обратного отсчёта (UTC).
 const NEXT_SIGNAL = "2026-11-01T03:30:01Z";
 
-// Ключи загадок: SHA-256 от ответа (в нижнем регистре, без пробелов по краям) -> страница.
-// Хэш ответа получить: в консоли браузера выполнить  await mirageHash("ответ")
-const PUZZLE_KEYS = {
-  // I · ЛИФТ (RU и EN ответ)
-  "9896c643dc3953847d830203f7086c37d98eeac72cbb026a3bc1bc8d6e2cea24": "b4e1c9.html",
-  "7ab3778776cde4fa728a162a53ad3abcc967d1bd7361039e0942888240c4ce86": "b4e1c9.html",
-};
+// Аналитика GoatCounter (без cookie). Код сайта из goatcounter.com, например "8m1rag3".
+// Пустая строка — аналитика выключена.
+const GOATCOUNTER = "";
 
-// I · ЛИФТ: хэш правильной последовательности этажей и зашифрованный ею текст за дверью 13.
-// Генератор с ответами лежит вне репозитория: Документы\8m1rag3-secrets\gen_lift.py
-const LIFT = {
-  check: "376a112518936d745aad53bea10a96771f6452020bac936d58a9b634fcf096a8",
-  ru: "8t7BLRx2M+KlJNkECBjE9PfRYfApixLWAiciXAW1hiuZHRjPeYNf7rmAXRsE9fl6nRxNU29/PT882Z+XdhsnOiAYGSPBGnrduT9IALoS2X2KauiDSRgSsi/G2XGL2p8F2tJMkifWjBrwXW1Vzy9zhIQAWrRvSGlDTqcZo3XTblwBBBQaGOxtPVHD4ZgwpKqe/Vmn8ifzc/p5NYGoUZTno+R1+gzmTNamN1jBl0KeJEk9C3f4j3S/u4GkB6CzvzX/BU1foWVwE5NoEyK8UHjXDEUIzh/3E173bbY00c5dR6sl/mcgj4PJIbpTzH0/5HmnEU7JPFiY76dtD9Dw8/bs",
-  en: "diJ0v6isjRAGvJak06doBB9lhQHOMsduxtiM2fABaY5vE0xojHKvW2YhsK6ZVwbLSli8tN6uhOSKe8Xfw6+A6ZzE57df8s9ND9Tr4Lq2GN9WyXjC6vC3aZtdaKE/SDjYYxvsR3V0LapS/rrqJ5KUhCPU+GiQ7u2V/28ZGrzTy7W1pq/KsWud2jqzfUejVQ==",
-};
+// Данные загадок (только шифротексты) лежат в puzzles-data.js и собираются генератором
+// вне репозитория: Документы\8m1rag3-secrets\gen.mjs. Ответов в публичном коде нет.
 
 /* ============================================================ */
 
 (function () {
   const root = document.documentElement;
+  const DATA = typeof PUZZLE_DATA === "undefined" ? null : PUZZLE_DATA;
+
+  // ---------- analytics ----------
+  if (GOATCOUNTER && location.hostname.endsWith("github.io")) {
+    const s = document.createElement("script");
+    s.async = true;
+    s.src = "https://gc.zgo.at/count.js";
+    s.dataset.goatcounter = `https://${GOATCOUNTER}.goatcounter.com/count`;
+    document.head.appendChild(s);
+  }
+  function track(name) {
+    try { window.goatcounter && window.goatcounter.count && window.goatcounter.count({ path: name, event: true }); } catch (e) {}
+  }
 
   // ---------- language ----------
   function getLang() {
@@ -66,11 +70,12 @@ const LIFT = {
 
   // ---------- random disturbances ----------
   const word = document.querySelector(".word:not(.reflect)");
+  function flash(ms) {
+    document.body.classList.add("flash");
+    setTimeout(() => document.body.classList.remove("flash"), ms || 140);
+  }
   function disturb() {
-    if (Math.random() < .35) {
-      document.body.classList.add("flash");
-      setTimeout(() => document.body.classList.remove("flash"), 140);
-    }
+    if (Math.random() < .35) flash();
     if (word) {
       word.classList.add("shiver");
       setTimeout(() => word.classList.remove("shiver"), 360);
@@ -124,85 +129,113 @@ const LIFT = {
     setInterval(tick, 1000);
   }
 
-  // ---------- puzzle key form ----------
-  async function sha256(text) {
-    const data = new TextEncoder().encode(text);
-    const buf = await crypto.subtle.digest("SHA-256", data);
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+  // ---------- crypto: slow key derivation + authenticated decryption ----------
+  // A wrong answer fails AES-GCM authentication, so nothing in the code reveals the answer,
+  // and every guess costs a full PBKDF2 run.
+  const te = new TextEncoder(), td = new TextDecoder();
+  const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  const norm = s => s.trim().toLowerCase().replace(/ё/g, "е").replace(/\s+/g, " ");
+  async function derive(secret, salt, iterations) {
+    const base = await crypto.subtle.importKey("raw", te.encode(secret), "PBKDF2", false, ["deriveKey"]);
+    return crypto.subtle.deriveKey({ name: "PBKDF2", hash: "SHA-256", salt, iterations }, base,
+      { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
   }
-  window.mirageHash = s => sha256(s.trim().toLowerCase());
+  async function open(key, blob) {
+    try {
+      const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(blob.i) }, key, unb64(blob.c));
+      return td.decode(pt);
+    } catch (e) { return null; }
+  }
 
+  // ---------- puzzle key form ----------
   const form = document.querySelector(".keyform");
-  if (form) {
+  if (form && DATA) {
     const verdict = document.querySelector(".verdict");
+    const btn = form.querySelector("button");
     form.addEventListener("submit", async e => {
       e.preventDefault();
-      const val = form.key.value.trim().toLowerCase();
-      if (!val) return;
-      let page = null;
-      try { page = PUZZLE_KEYS[await sha256(val)]; } catch (err) {}
-      if (page) { location.href = page; return; }
-      const lang = root.dataset.lang;
-      verdict.textContent = lang === "ru" ? "НЕВЕРНО. ПОПРОБУЙ ЕЩЁ РАЗ." : "INCORRECT. TRY AGAIN.";
+      const val = norm(form.key.value);
+      if (!val || btn.disabled) return;
+      btn.disabled = true;
+      verdict.textContent = "···";
+      const key = await derive(val, unb64(DATA.keys.s), DATA.iter);
+      let hit = null;
+      for (const blob of DATA.keys.list) { hit = await open(key, blob); if (hit) break; }
+      btn.disabled = false;
+      if (hit) {
+        const { page, k } = JSON.parse(hit);
+        track("key-accepted/" + page);
+        location.href = `${page}#${k}`;
+        return;
+      }
+      verdict.textContent = root.dataset.lang === "ru" ? "НЕВЕРНО. ПОПРОБУЙ ЕЩЁ РАЗ." : "INCORRECT. TRY AGAIN.";
       form.classList.remove("shake"); void form.offsetWidth; form.classList.add("shake");
-      document.body.classList.add("flash");
-      setTimeout(() => document.body.classList.remove("flash"), 140);
+      flash();
     });
+  }
+
+  // ---------- sealed level pages: content decrypts only with the secret from the link ----------
+  const sealed = document.querySelector(".sealed[data-page]");
+  if (sealed && DATA) {
+    const page = sealed.dataset.page, blob = DATA.pages[page], k = location.hash.slice(1);
+    if (blob && k) {
+      derive(k, te.encode(page), 1).then(key => open(key, blob)).then(html => {
+        if (html) { sealed.innerHTML = html; track("level-open/" + page); }
+      });
+    }
   }
 
   // ---------- I · lift panel ----------
   const panel = document.querySelector(".panel");
-  if (panel) {
+  if (panel && DATA) {
     const display = panel.querySelector(".display");
     const b13 = panel.querySelector(".b13");
     const reveal = document.querySelector(".reveal");
     const pressed = [];
-    let key = null;
+    let liftKey = null, attempt = 0, timer = null;
 
-    async function keystream(seq, n) {
-      let out = new Uint8Array(0), i = 0;
-      while (out.length < n) {
-        const block = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${seq}:${i++}`)));
-        const next = new Uint8Array(out.length + block.length);
-        next.set(out); next.set(block, out.length); out = next;
-      }
-      return out.slice(0, n);
-    }
-    async function decrypt(b64, seq) {
-      const data = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-      const ks = await keystream(seq, data.length);
-      return new TextDecoder().decode(data.map((b, i) => b ^ ks[i]));
-    }
     async function showReveal() {
-      reveal.querySelector(".reveal-text").textContent = await decrypt(LIFT[root.dataset.lang], key);
+      const text = await open(liftKey, DATA.lift[root.dataset.lang]);
+      reveal.querySelector(".reveal-text").textContent = text || "";
+    }
+    async function check(seq, id) {
+      display.textContent = "··";
+      const key = await derive("8M1RAG3:" + seq, unb64(DATA.lift.s), DATA.iter);
+      if (id !== attempt) return;
+      if (await open(key, DATA.lift.en)) {
+        liftKey = key;
+        flash(180);
+        display.textContent = "??";
+        b13.hidden = false;
+        track("lift-solved");
+      } else {
+        display.textContent = seq.split("-").pop().padStart(2, "0");
+      }
     }
 
-    panel.querySelectorAll(".buttons button").forEach(btn => btn.addEventListener("click", async () => {
+    panel.querySelectorAll(".buttons button").forEach(btn => btn.addEventListener("click", () => {
       const f = btn.dataset.floor;
       display.textContent = f.padStart(2, "0");
       btn.classList.add("lit");
       setTimeout(() => btn.classList.remove("lit"), 600);
       pressed.push(f);
       if (pressed.length > 3) pressed.shift();
-      const seq = pressed.join("-");
-      if (pressed.length === 3 && await sha256("8M1RAG3:" + seq) === LIFT.check) {
-        key = seq;
-        document.body.classList.add("flash");
-        setTimeout(() => document.body.classList.remove("flash"), 180);
-        display.textContent = "??";
-        b13.hidden = false;
-      }
+      if (liftKey || pressed.length < 3) return;
+      // wait until the rider stops pressing, then let the car "think"
+      const id = ++attempt, seq = pressed.join("-");
+      clearTimeout(timer);
+      timer = setTimeout(() => check(seq, id), 450);
     }));
 
     b13.addEventListener("click", async () => {
-      if (!key) return;
+      if (!liftKey) return;
       display.textContent = "13";
       panel.classList.add("arrive");
       await showReveal();
       reveal.hidden = false;
       reveal.scrollIntoView({ behavior: "smooth", block: "center" });
     });
-    document.addEventListener("langchange", () => { if (key && !reveal.hidden) showReveal(); });
+    document.addEventListener("langchange", () => { if (liftKey && !reveal.hidden) showReveal(); });
   }
 
   // ---------- for those who open the console ----------
