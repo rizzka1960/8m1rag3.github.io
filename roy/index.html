@@ -33,7 +33,9 @@
   --font-body:Rubik,"Trebuchet MS","Segoe UI",Roboto,sans-serif;
   --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
   --sal:max(16px,env(safe-area-inset-left,0px)); --sar:max(16px,env(safe-area-inset-right,0px));
-  --ui:clamp(13px,1.1vmin + 9px,19px);
+  --ui:clamp(14px,1.2vmin + 10px,21px);
+  /* round action buttons (abilities, send share); stays above the 48dp touch minimum */
+  --btnD:clamp(64px,6.5vmin + 33px,82px);
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;padding:0;overflow:hidden;background:var(--bg);overscroll-behavior:none}
@@ -46,15 +48,15 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent;touch-
 /* HUD */
 #hud{position:fixed;top:0;left:0;right:0;z-index:3;display:flex;align-items:center;gap:12px;pointer-events:none;
   padding:calc(var(--sat) + 8px) var(--sar) 8px var(--sal);background:linear-gradient(to bottom,rgba(18,10,14,.78),rgba(18,10,14,0))}
-.ibtn{pointer-events:auto;flex:none;width:clamp(40px,4.5vmin + 22px,52px);height:clamp(40px,4.5vmin + 22px,52px);border-radius:14px;border:1px solid var(--panel-line);background:var(--panel);
+.ibtn{pointer-events:auto;flex:none;width:clamp(44px,5vmin + 24px,58px);height:clamp(44px,5vmin + 24px,58px);border-radius:14px;border:1px solid var(--panel-line);background:var(--panel);
   color:var(--amber);display:grid;place-items:center;cursor:pointer;transition:transform .08s}
 .ibtn:active{transform:scale(.92)}
 .ibtn svg{width:46%;height:46%}
 .hinfo{display:flex;flex-direction:column;line-height:1.1;min-width:0}
 #hLevel{font-family:var(--font-display);font-size:1.12em;color:var(--amber);white-space:nowrap;text-shadow:0 2px 0 rgba(0,0,0,.4)}
-#hTime{font-size:.82em;opacity:.8;white-space:nowrap;font-variant-numeric:tabular-nums}
+#hTime{font-size:.9em;opacity:.85;white-space:nowrap;font-variant-numeric:tabular-nums}
 #hTime.over{color:var(--coral);opacity:.9}
-#bar{flex:1;min-width:60px;height:12px;border-radius:7px;overflow:hidden;display:flex;background:rgba(0,0,0,.4);box-shadow:inset 0 0 0 1px rgba(0,0,0,.4)}
+#bar{flex:1;min-width:60px;height:14px;border-radius:8px;overflow:hidden;display:flex;background:rgba(0,0,0,.4);box-shadow:inset 0 0 0 1px rgba(0,0,0,.4)}
 #bar i{display:block;height:100%;transition:width .35s ease}
 #barP{background:linear-gradient(var(--amber-hi),var(--amber))}
 #barH{background:var(--violet)}
@@ -62,20 +64,20 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent;touch-
 
 /* ability bar */
 #dock{position:fixed;z-index:3;left:50%;transform:translateX(-50%);bottom:calc(var(--sab) + 8px);width:calc(100% - 24px);display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
-#dockRow{display:flex;align-items:center;justify-content:center;gap:12px;min-height:clamp(58px,6vmin + 30px,74px);width:100%}
+#dockRow{display:flex;align-items:center;justify-content:center;gap:12px;min-height:var(--btnD);width:100%}
 /* the send-share button sits at the right; a matching spacer on the left keeps the abilities centred */
 #dockRow::before{content:"";flex:none;width:var(--sendW)}
 #dockMid{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px}
-#bSend{--sendW:clamp(58px,6vmin + 30px,74px);pointer-events:auto;flex:none;width:var(--sendW);height:var(--sendW);border-radius:50%;cursor:pointer;padding:0;
+#bSend{--sendW:var(--btnD);pointer-events:auto;flex:none;width:var(--sendW);height:var(--sendW);border-radius:50%;cursor:pointer;padding:0;
   border:2px solid var(--amber);background:radial-gradient(circle at 50% 35%,#4a2c14,#24150d);color:var(--cream);
   display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.4);transition:transform .08s}
 #bSend b{font-family:var(--font-display);font-size:1.15em;line-height:1;color:var(--amber-hi)}
 #bSend small{font-size:.6em;margin-top:2px;opacity:.85}
 #bSend:active{transform:scale(.92)}
 #bSend:focus-visible{outline:3px solid var(--amber-hi);outline-offset:2px}
-#dockRow{--sendW:clamp(58px,6vmin + 30px,74px)}
+#dockRow{--sendW:var(--btnD)}
 #abbar{display:flex;gap:clamp(10px,2vmin,18px)}
-.ab{pointer-events:auto;position:relative;width:clamp(58px,6vmin + 30px,74px);height:clamp(58px,6vmin + 30px,74px);border-radius:50%;border:0;cursor:pointer;padding:0;
+.ab{pointer-events:auto;position:relative;width:var(--btnD);height:var(--btnD);border-radius:50%;border:0;cursor:pointer;padding:0;
   background:radial-gradient(circle,#2d1b12 0 62%,transparent 63%),conic-gradient(var(--amber) calc(var(--p,1) * 1turn),rgba(255,255,255,.12) 0);
   display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .08s,filter .2s;box-shadow:0 4px 12px rgba(0,0,0,.4)}
 .ab svg{width:40%;height:40%;margin-top:-4px}
@@ -86,14 +88,14 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent;touch-
 @keyframes armed{to{transform:scale(1.08)}}
 @media (orientation:landscape) and (max-height:560px){
   #dock{left:auto;transform:none;right:var(--sar);top:calc(var(--sat) + 64px);bottom:calc(var(--sab) + 8px);width:clamp(150px,22vw,200px);justify-content:center}
-  #dockRow{flex-direction:column;min-height:0;gap:8px;--sendW:54px}
+  #dockRow{flex-direction:column;min-height:0;gap:8px;--sendW:58px}
   #dockRow::before{display:none}
   #dockMid{flex:none;flex-direction:column;gap:8px}
   #abbar{flex-direction:column;gap:8px}
-  .ab{width:54px;height:54px}
+  .ab{width:58px;height:58px}
 }
 
-#bX2{pointer-events:auto;max-width:240px;line-height:1.15}
+#bX2{pointer-events:auto;max-width:260px;line-height:1.15;font-size:.9em;white-space:nowrap}
 #tip{width:min(360px,100%);padding:10px 14px;border-radius:14px;
   background:var(--panel);border:1px solid rgba(159,208,138,.4);text-align:center;line-height:1.35;font-size:.92em;pointer-events:none;transition:opacity .6s}
 #tip.fade{opacity:0}

@@ -3,7 +3,11 @@
 'use strict';
 const t = I18N.t;
 const MW = 400, MH = 720;              // canonical map space (portrait)
-const MAXLEN = 1350, SPEED = 90, TOWER_R = 86, BEE_W = 13;
+const MAXLEN = 1350, SPEED = 90, TOWER_R = 86, BEE_W = 15;
+// VIS enlarges hives, modifiers and map labels for readability on phones; gameplay pacing is unchanged.
+const VIS = 1.15;
+// Collision radius of a modifier: the original size, so the larger drawing does not change the balance.
+const hitR = m => m.r / VIS;
 const $ = id => document.getElementById(id);
 const cv = $('cv');
 const ctx = cv.getContext('2d');
@@ -121,7 +125,7 @@ const INTRO_OF = { add10: 'flower', add25: 'flower', mul2: 'flower', mul3: 'x3',
 const INTRO_ORDER = ['flower', 'spider', 'div', 'ab_honey', 'switch', 'dandelion', 'rocks', 'wasp', 'queen', 'ab_boost', 'wind', 'fort', 'portal', 'puddle', 'tower', 'ab_smoke', 'hornets', 'x3'];
 
 function rocksClear(a, b, mods, pad) {
-  for (const m of mods) if (m.kind === 'rock' && segDist(m.x, m.y, a.x, a.y, b.x, b.y) < m.r + pad) return false;
+  for (const m of mods) if (m.kind === 'rock' && segDist(m.x, m.y, a.x, a.y, b.x, b.y) < hitR(m) + pad) return false;
   return true;
 }
 function connected(hives, mods) {
@@ -297,6 +301,9 @@ function tryGen(n, attempt, noRocks) {
     const k = ri(1, 2);
     for (let i = 0; i < k; i++) { const p = between(30, 12); if (p) { const blob = []; for (let j = 0; j < 9; j++) blob.push(0.82 + R() * 0.22); mods.push({ kind: 'puddle', x: p.x, y: p.y, r: 30, blob: blob }); present.add('puddle'); } }
   }
+  // scale before the reachability check so bigger rocks cannot block a route unnoticed
+  for (const h of hives) h.r *= VIS;
+  for (const m of mods) if (m.r) m.r *= VIS;
   if (!connected(hives, mods)) return null;
   return {
     n: n, hives: hives, mods: mods, present: present, horns: horns,
@@ -338,7 +345,7 @@ function burst(x, y, color, n, sp, size, grav) {
   }
 }
 const floats = [];
-function floatText(x, y, text, color, size) { if (floats.length > 28) floats.shift(); floats.push({ x: x, y: y, text: text, color: color, size: size || 15, life: 0, max: 1.25 }); }
+function floatText(x, y, text, color, size) { if (floats.length > 28) floats.shift(); floats.push({ x: x, y: y, text: text, color: color, size: Math.round((size || 15) * VIS), life: 0, max: 1.25 }); }
 
 // ---------------------------------------------------------------- paths
 function cumOf(pts) {
@@ -392,7 +399,7 @@ function zoneFactor(x, y, dx, dy) {
   let f = 1;
   for (const m of G.mods) {
     if (m.kind === 'wind') { if (segDist(x, y, m.ax, m.ay, m.bx, m.by) < m.w / 2) f *= clamp(1 + 0.8 * (dx * m.dx + dy * m.dy), 0.55, 1.8); }
-    else if (m.kind === 'puddle') { if (Math.hypot(x - m.x, y - m.y) < m.r) f *= 0.45; }
+    else if (m.kind === 'puddle') { if (Math.hypot(x - m.x, y - m.y) < hitR(m)) f *= 0.45; }
   }
   return f;
 }
@@ -413,7 +420,7 @@ function predict(pts, count, owner) {
         if (m.kind === 'dandelion' && !m.alive) continue;
         let mx = m.x, my = m.y;
         if (m.kind === 'wasp') { const p = waspPos(m, t0 + tt); mx = p.x; my = p.y; }
-        if (Math.hypot(x - mx, y - my) < m.r + 4) {
+        if (Math.hypot(x - mx, y - my) < hitR(m) + 4) {
           const before = c; c = Math.min(999, applyOp(c, modOp(m, t0 + tt)));
           used.set(m, c >= before);
           if (c <= 0) return { c: 0, used: used, tt: tt };
@@ -555,7 +562,7 @@ function update(dt) {
     h.flip = Math.max(0, h.flip - dt * 2);
     h.smoke = Math.max(0, h.smoke - dt);
     if (h.owner !== 'n' && h.smoke <= 0 && h.count < h.cap) {
-      const rate = 1.25 * (h.r / 28) * (h.type === 'queen' ? 2 : 1) * (h.owner === 'p' ? 1 : G.enemyGrow);
+      const rate = 1.25 * (h.r / VIS / 28) * (h.type === 'queen' ? 2 : 1) * (h.owner === 'p' ? 1 : G.enemyGrow);
       h.grow += dt * rate;
       while (h.grow >= 1) { h.grow -= 1; if (h.count < h.cap) h.count++; }
     }
@@ -584,7 +591,7 @@ function update(dt) {
     for (const m of G.mods) {
       if (!isCountMod(m) || s.used.has(m)) continue;
       if (m.kind === 'dandelion' && !m.alive) continue;
-      if (Math.hypot(m.x - s.x, m.y - s.y) < m.r + 4) { s.used.add(m); hitMod(s, m); if (s.dead) break; }
+      if (Math.hypot(m.x - s.x, m.y - s.y) < hitR(m) + 4) { s.used.add(m); hitMod(s, m); if (s.dead) break; }
     }
     const want = Math.min(36, Math.max(1, s.count));
     while (s.bees.length < want) s.bees.push({ a: Math.random() * 6.283, r: Math.sqrt(Math.random()), w: 1.2 + Math.random() * 2.4, ph: Math.random() * 6.283, sz: 0.8 + Math.random() * 0.3 });
@@ -688,7 +695,7 @@ function dragMove(p) {
       else {
         drag.blockedNow = false; drag.tooLong = false;
         let pt = null;
-        for (const m of G.mods) if (m.kind === 'portal' && segDist(m.x, m.y, last.x, last.y, p.x, p.y) < m.r) { pt = m; break; }
+        for (const m of G.mods) if (m.kind === 'portal' && segDist(m.x, m.y, last.x, last.y, p.x, p.y) < hitR(m)) { pt = m; break; }
         if (pt) { drag.len += dist(last, pt); drag.pts.push({ x: pt.x, y: pt.y }); drag.portal = { from: pt, to: pt.other }; Sfx.play('portal'); burst(pt.x, pt.y, '#5fe0d0', 10, 70, 2); }
         else { drag.pts.push({ x: p.x, y: p.y }); drag.len += d; }
       }
@@ -952,7 +959,7 @@ function drawMod(m) {
       X.restore();
       X.beginPath(); X.arc(0, 0, m.r * 0.6, 0, 6.283); X.fillStyle = cc; X.fill();
       X.lineWidth = 2; X.strokeStyle = 'rgba(255,243,214,0.55)'; X.stroke();
-      text(opLabel(m), 0, 1, m.v >= 10 ? 15 : 17, '#fff3d6', 'rgba(0,0,0,0.5)');
+      text(opLabel(m), 0, 1, (m.v >= 10 ? 15 : 17) * VIS, '#fff3d6', 'rgba(0,0,0,0.5)');
       X.restore(); break;
     }
     case 'spider': {
@@ -967,7 +974,7 @@ function drawMod(m) {
       X.strokeStyle = '#ff4d40'; X.lineWidth = 1.2;
       for (let i = 0; i < 4; i++) { const dx = 2 + i * 1.3; X.beginPath(); X.moveTo(-1, sy); X.lineTo(-dx - 2, sy - 3 + i * 2); X.moveTo(1, sy); X.lineTo(dx + 2, sy - 3 + i * 2); X.stroke(); }
       X.fillStyle = '#ff4d40'; X.beginPath(); X.arc(0, sy, 2.8, 0, 6.283); X.fill();
-      text(opLabel(m), 0, 5, 16, '#ff8a7a', 'rgba(20,11,19,0.95)');
+      text(opLabel(m), 0, 5, 16 * VIS, '#ff8a7a', 'rgba(20,11,19,0.95)');
       X.restore(); break;
     }
     case 'switch': {
@@ -980,7 +987,7 @@ function drawMod(m) {
       X.lineWidth = 2; X.strokeStyle = 'rgba(255,243,214,0.35)'; X.stroke();
       X.lineWidth = 4; X.strokeStyle = col; X.globalAlpha = left < 0.2 ? 0.5 + 0.5 * Math.sin(tm * 30) : 1;
       X.beginPath(); X.arc(0, 0, m.r + 5, -Math.PI / 2, -Math.PI / 2 + 6.283 * left); X.stroke(); X.globalAlpha = 1;
-      text(opLabel(o), 0, 1, 17, '#fff3d6', 'rgba(0,0,0,0.6)');
+      text(opLabel(o), 0, 1, 17 * VIS, '#fff3d6', 'rgba(0,0,0,0.6)');
       X.restore(); break;
     }
     case 'dandelion': {
@@ -995,7 +1002,7 @@ function drawMod(m) {
           X.beginPath(); X.moveTo(0, 0); X.lineTo(x2, y2); X.stroke(); X.beginPath(); X.arc(x2, y2, 1.6, 0, 6.283); X.fill();
         }
         X.beginPath(); X.arc(0, 0, m.r * 0.5, 0, 6.283); X.fillStyle = '#7a6a3a'; X.fill();
-        text(opLabel({ op: 'add', v: m.v }), 0, 1, 14, '#fffaf0', 'rgba(0,0,0,0.6)');
+        text(opLabel({ op: 'add', v: m.v }), 0, 1, 14 * VIS, '#fffaf0', 'rgba(0,0,0,0.6)');
       } else {
         X.globalAlpha = 0.5; X.strokeStyle = '#fffaf0'; X.lineWidth = 2;
         X.beginPath(); X.arc(0, 0, m.r * 0.55, -Math.PI / 2, -Math.PI / 2 + 6.283 * (1 - m.regrow / 25)); X.stroke();
@@ -1012,7 +1019,7 @@ function drawMod(m) {
       const ang = Math.atan2(m.by - m.ay, m.bx - m.ax) + dir;
       drawSprite('e', ((tm * 30) | 0) & 1, m.x, m.y, ang, 34);
       setWorld();
-      text('−' + m.v, m.x, m.y - m.r - 10, 15, '#ff8a7a', 'rgba(20,11,19,0.9)');
+      text('−' + m.v, m.x, m.y - m.r - 10, 15 * VIS, '#ff8a7a', 'rgba(20,11,19,0.9)');
       break;
     }
     case 'wind': {
@@ -1092,9 +1099,9 @@ function drawSwarm(s) {
   setWorld();
   if (s.owner === 'p' && G.boostT > 0) { X.strokeStyle = 'rgba(255,224,138,0.6)'; X.lineWidth = 2; X.beginPath(); X.arc(s.x, s.y, rad + 8, 0, 6.283); X.stroke(); }
   const str = String(s.count);
-  X.font = '14px ' + FONT; const w = X.measureText(str).width + 12, y = s.y - rad - 12;
+  X.font = Math.round(14 * VIS) + 'px ' + FONT; const w = X.measureText(str).width + 12, y = s.y - rad - 12;
   X.fillStyle = 'rgba(20,10,8,0.6)'; X.beginPath(); roundRect(X, s.x - w / 2, y - 10, w, 20, 10); X.fill();
-  text(str, s.x, y + 1, 14, F.hi);
+  text(str, s.x, y + 1, Math.round(14 * VIS), F.hi);
 }
 function polyline(pts) { X.beginPath(); X.moveTo(pts[0].x, pts[0].y); for (let i = 1; i < pts.length; i++) X.lineTo(pts[i].x, pts[i].y); }
 function drawDrag() {
@@ -1131,12 +1138,12 @@ function drawDrag() {
     const label = drag.tooLong ? t('too_long') : (drag.blockedNow || drag.endBlocked) ? t('blocked') : '→ ' + pr.c;
     const off = 56 / scale;
     let ly = cur.y - off; if (ly < 16) ly = cur.y + off;
-    X.font = '17px ' + FONT; const w = X.measureText(label).width + 20;
+    X.font = Math.round(17 * VIS) + 'px ' + FONT; const w = X.measureText(label).width + 20;
     const lx = clamp(cur.x, w / 2 + 2, LAY.W - w / 2 - 2);
     X.fillStyle = bad ? 'rgba(80,16,12,0.85)' : pr.capture ? 'rgba(30,70,30,0.9)' : 'rgba(30,18,10,0.85)';
     X.beginPath(); roundRect(X, lx - w / 2, ly - 15, w, 30, 15); X.fill();
     X.strokeStyle = bad ? '#ff5f4f' : pr.capture ? '#9fd08a' : 'rgba(255,191,60,0.5)'; X.lineWidth = 1.5; X.stroke();
-    text(label, lx, ly + 1, 17, bad ? '#ffb3a8' : pr.capture ? '#d8ffc6' : FAC.p.hi);
+    text(label, lx, ly + 1, Math.round(17 * VIS), bad ? '#ffb3a8' : pr.capture ? '#d8ffc6' : FAC.p.hi);
   }
   X.restore();
 }
